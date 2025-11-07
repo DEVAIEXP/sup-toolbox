@@ -1,0 +1,26 @@
+# MANIFEST.in
+
+include LICENSE
+include NOTICE
+include README.md
+include CHANGELOG.md
+
+recursive-include src/sup_toolbox *.json
+recursive-include src/sup_toolbox *.txt
+recursive-include src/sup_toolbox *.md
+
+prune src/sup_toolbox/*/__pycache__
+prune src/sup_toolbox/*/*/__pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .DS_Store
+
+prune models
+prune outputs
+prune assets
+prune dist
+prune docs
+prune scripts
+prune venv
+prune build
+prune *.egg-info

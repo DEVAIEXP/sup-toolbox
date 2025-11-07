@@ -1,0 +1,40 @@
+torch>=2.8.0
+torchvision>=0.23.0
+torchaudio>=2.8.0
+diffusers==0.35.1
+transformers==4.56.0
+accelerate>=1.10.1
+coloredlogs==15.0.1
+opencv-python
+scipy
+einops
+bitsandbytes>=0.48.1
+numpy>=2.2.6
+fastapi>=0.115.2
+peft
+torchsde
+python-dotenv
+xformers==0.0.32.post2
+hf_xet
+onnxruntime
+onnxruntime-gpu
+optimum-quanto==0.2.7
+
+[:sys_platform != "win32"]
+triton==3.4.0
+
+[:sys_platform == "linux"]
+sam-2@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/SAM_2-1.1-cp310-cp310-linux_x86_64.whl
+groundingdino@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/groundingdino-0.1.1-cp310-cp310-linux_x86_64.whl
+flash_attn@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/flash_attn-2.8.2-cp310-cp310-linux_x86_64.whl
+
+[:sys_platform == "win32"]
+triton-windows<3.5
+sam-2@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/sam_2-1.1-py3-none-any.whl
+groundingdino@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/groundingdino-0.1.1-cp310-cp310-win_amd64.whl
+flash_attn@ https://huggingface.co/DEVAIEXP/wheels/resolve/main/flash_attn-2.8.2-cp310-cp310-win_amd64.whl
+
+[dev]
+ruff>=0.14.3
+build
+twine

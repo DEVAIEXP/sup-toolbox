@@ -1,0 +1,187 @@
+{
+    "restorer_engine": "SUPIR",
+    "upscaler_engine": "None",
+    "restorer_model": "juggernautXL_juggXIByRundiffusion",
+    "upscaler_model": "None",
+    "vae_model": "Default",
+    "restorer_sampler": "DPM++ 3M",
+    "upscaler_sampler": "Euler",
+    "restorer_prompt_method": "Long prompt weighted",
+    "restorer_prompt_1": "Direct flash photography. Three (30-year-old men:1.1), (all black hair:1.2). Left man: (black t-shirt:1.1) with white text 'Road Kill Cafe' and in his right forearm has distinct (dark tribal tattoo:1.2).Their hands has clearly defined fingers and distinct outlines. A (plaster interior wall: 1.1) on the left.",
+    "restorer_prompt_2": "Extremely detailed faces, flawless natural skin texture, skin pore detailing, 4k, 8k, clean image, no noise, shot on Fujifilm Superia 400, sharp focus, faithful colors.",
+    "restorer_negative_prompt": "low-res, disfigured, analog artifacts, smudged, animate, (out of focus:1.2), catchlights, over-smooth, extra eyes, worst quality, unreal engine, art, aberrations, surreal, pastel drawing, (tattoo patterns on walls:1.4), tatto patterns on skin, text on walls, green wall, grainy wall texture, harsh lighting, (tribal patterns on clothing text:1.3), tattoo on chest, dead eyes, deformed fingers, undistinct fingers outlines",
+    "use_restoration_mask": false,
+    "restoration_mask_prompt": "",
+    "restorer_settings": {
+        "apply_prompt_2": true,
+        "supir_model": "Quality",
+        "restoration_scale": 4,
+        "s_churn": 0.02,
+        "s_noise": 1.003,
+        "start_point": "noise",
+        "strength": 1,
+        "general": {
+            "seed": 469071357,
+            "randomize_seed": false,
+            "num_steps": 30,
+            "guidance_scale": 9,
+            "guidance_rescale": 0.5,
+            "num_images": 1,
+            "image_size_fix_mode": "Padding",
+            "tile_size": 1024,
+            "upscaling_mode": "Direct",
+            "upscale_factor": "1x",
+            "cfg_decay_rate": 0.5,
+            "strength_decay_rate": 0.5
+        },
+        "cfg_settings": {
+            "use_linear_CFG": true,
+            "reverse_linear_CFG": true,
+            "guidance_scale_start": 5
+        },
+        "controlnet_settings": {
+            "controlnet_conditioning_scale": 1,
+            "use_linear_control_scale": true,
+            "reverse_linear_control_scale": true,
+            "control_scale_start": 1
+        },
+        "pag_settings": {
+            "enable_PAG": false,
+            "pag_scale": 3,
+            "use_linear_PAG": false,
+            "reverse_linear_PAG": false,
+            "pag_scale_start": 1,
+            "pag_layers": [
+                "mid"
+            ]
+        },
+        "post_processsing_settings": {
+            "color_fix_mode": "Wavelet"
+        }
+    },
+    "restorer_supir_advanced_settings": {
+        "sft_post_mid": {
+            "scale_end": 1,
+            "linear": true,
+            "scale_start": 0.7,
+            "reverse": true,
+            "sft_active": true,
+            "enable_custom_scale": true
+        },
+        "sft_up_block_0_stage0": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_0_stage1": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_0_stage2": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_1_stage0": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_1_stage1": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_1_stage2": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_2_stage0": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_2_stage1": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "sft_up_block_2_stage2": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": true,
+            "enable_custom_scale": false
+        },
+        "cross_up_block_0_stage1": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": false,
+            "enable_custom_scale": false
+        },
+        "cross_up_block_0_stage2": {
+            "scale_end": 1,
+            "linear": true,
+            "scale_start": 0.7,
+            "reverse": true,
+            "sft_active": true,
+            "enable_custom_scale": true
+        },
+        "cross_up_block_1_stage1": {
+            "scale_end": 1,
+            "linear": false,
+            "scale_start": 1,
+            "reverse": false,
+            "sft_active": false,
+            "enable_custom_scale": false
+        },
+        "cross_up_block_1_stage2": {
+            "scale_end": 1,
+            "linear": true,
+            "scale_start": 0.7,
+            "reverse": true,
+            "sft_active": true,
+            "enable_custom_scale": true
+        }
+    },
+    "upscaler_prompt_method": "Long prompt weighted",
+    "upscaler_prompt_1": null,
+    "upscaler_prompt_2": null,
+    "upscaler_negative_prompt": null,
+    "upscaler_settings": null,
+    "restorer_sampler_settings": {
+        "scale_linear_exponent": 1.93
+    },
+    "upscaler_sampler_settings": {
+        "scale_linear_exponent": 1.93
+    }
+}

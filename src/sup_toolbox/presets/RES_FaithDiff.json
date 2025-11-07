@@ -1,0 +1,68 @@
+{
+    "restorer_engine": "FaithDiff",
+    "upscaler_engine": "None",
+    "restorer_model": "RealVisXL_V5.0",
+    "upscaler_model": "None",
+    "vae_model": "Default",
+    "restorer_sampler": "Euler",
+    "upscaler_sampler": "Euler",
+    "restorer_prompt_method": "Long prompt weighted",
+    "restorer_prompt_1": "Three 30-year-old men are standing next to each other. Tribal tattoo on the right forearm.",
+    "restorer_prompt_2": "Ultra-quality photography, flawless natural skin texture, shot on Fujifilm Superia 400, clean image, sharp focus.",
+    "restorer_negative_prompt": "low res, worst quality, blurry, out of focus, analog artifacts, oil painting, illustration, art, anime, cartoon, CG Style, unreal engine, render, artwork, (wrinkles:1.4), fine lines, smile lines, age spots, (blemishes:1.2), acne, scars, freckles, blotchy skin, deformed mouth, catchlights",
+    "use_restoration_mask": false,
+    "restoration_mask_prompt": "",
+    "restorer_settings": {
+        "apply_prompt_2": true,
+        "invert_prompts": true,
+        "apply_ipa_embeds": true,
+        "s_churn": 0.00,
+        "s_noise": 1.003,
+        "start_point": "noise",
+        "strength": 1.0,
+        "general": {
+            "seed": 1925618217,
+            "randomize_seed": false,
+            "num_steps": 30,
+            "guidance_scale": 6,
+            "guidance_rescale": 0.5,
+            "num_images": 1,
+            "image_size_fix_mode": "Progressive Resize",
+            "tile_size": 1024,
+            "upscaling_mode": "Direct",
+            "upscale_factor": "1x",
+            "cfg_decay_rate": 0.5,
+            "strength_decay_rate": 0.5
+        },
+        "controlnet_settings": {
+            "controlnet_conditioning_scale": 1,
+            "use_linear_control_scale": false,
+            "reverse_linear_control_scale": false,
+            "control_scale_start": 1.0
+        },
+        "pag_settings": {
+            "enable_PAG": false,
+            "pag_scale": 1.0,
+            "use_linear_PAG": false,
+            "reverse_linear_PAG": false,
+            "pag_scale_start": 0.1,
+            "pag_layers": [
+                "mid"
+            ]
+        },
+        "post_processsing_settings": {
+            "color_fix_mode": "Wavelet"
+        }
+    },
+    "upscaler_prompt_method": "Long prompt weighted",
+    "upscaler_prompt_1": null,
+    "upscaler_prompt_2": null,
+    "upscaler_negative_prompt": null,
+    "upscaler_settings": null,
+    "restorer_sampler_settings": {
+        "scale_linear_exponent": 1.97
+    },
+    "upscaler_sampler_settings": {
+        "scale_linear_exponent": 1.93
+    }
+}

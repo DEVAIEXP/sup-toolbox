@@ -1,0 +1,60 @@
+{
+    "SetupModels": {           
+        "ControlNet": [ 
+            { "model_id": "DEVAIEXP/controlnet-union-promax-sdxl-1.0", "local_id": "union-promax-sdxl-1.0", "class_name": "ControlNetModel", "model_name": "controlnet-union", "model_base": "SD-XL", "model_category": "controlnet-union", "model_dir": null, "subfolder": null, "revision": null, "variant":"fp16", "allow_patterns": null, "ignore_patterns": [".gitattributes", "diffusion_pytorch_model.safetensors", "*.bin", "*.png", "*.webp"], "use_safetensors": true, "download_in_root": false }        
+        ],  
+        "IPAdapter": [          
+            { "model_id": "DEVAIEXP/ip-adapters-sdxl", "local_id": "h94-adapters", "class_name": null, "model_name": "ip-adapter", "model_base": "SD-XL", "model_category": "ip-adapter", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png"], "use_safetensors": true, "download_in_root": false }
+        ],    
+        "VAE": [
+            { "model_id": "madebyollin/sdxl-vae-fp16-fix", "local_id": "sdxl-vae-fp16-fix", "class_name": "AutoencoderKL", "model_name": "sdxl-vae-fp16-fix", "model_base": "SD-XL", "model_category": "vae", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "*.jpg", "*.safetensors"], "use_safetensors": false, "download_in_root": false },
+            { "model_id": "madebyollin/taesdxl", "local_id": "taesdxl", "class_name": "AutoencoderTiny", "model_name": "taesdxl", "model_base": "SD-XL", "model_category": "vae", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "*.jpg", "*.safetensors"], "use_safetensors": false, "download_in_root": false }      
+        ],
+        "CLIP": [
+            { "model_id": "DEVAIEXP/CLIP-ViT-H-14", "local_id": "CLIP-ViT-H-14", "class_name": "CLIPVisionModelWithProjection", "model_name": "clip-vit-h-14", "model_base": "SD-XL", "model_category": "clip", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.safetensors", "*.png"], "use_safetensors": false, "download_in_root": false }
+        ], 
+        "ImageTools": [
+            { "model_id": "DEVAIEXP/image-tools", "local_id": "image-tools", "class_name": null, "model_name": "image-tools", "model_base": null, "model_category": "image-tools", "model_dir": "models", "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "antelopev2/*", "buffalo_l/*", "humanparsing/*"], "use_safetensors": false, "download_in_root": true }
+        ],       
+        "Diffusers": [           
+            { "model_id": "misri/juggernautXL_juggXIByRundiffusion", "local_id": "juggernautXL_juggXIByRundiffusion", "class_name": null, "model_name": "juggernautXL_juggXIByRundiffusion", "model_base": "SD-XL", "model_category": "diffusers", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "*.jpg"], "use_safetensors": true, "download_in_root": false },
+            { "model_id": "SG161222/RealVisXL_V5.0", "local_id": "RealVisXL_V5.0", "class_name": null, "model_name": "RealVisXL_V5.0", "model_base": "SD-XL", "model_category": "diffusers", "model_dir": null, "subfolder": null, "revision": null, "variant": "fp16", "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "*.jpg", "RealVisXL_V5.0_fp32.*"], "use_safetensors": true, "download_in_root": false }
+        ],
+        "Caption": [
+            { "model_id": "llava-hf/llava-1.5-7b-hf", "local_id": "llava-1.5-7b-hf", "class_name": null, "model_name": "llava-1.5-7b-hf", "model_base": null, "model_category": "caption", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png", "*.jpg"], "use_safetensors": true, "download_in_root": false }
+        ],
+        "Restorer": [
+            { "model_id": "DEVAIEXP/SUPIR_Q", "local_id": "SUPIR_Q", "class_name": null, "model_name": "SUPIR_Q", "model_base": "SD-XL", "model_category": "restorer", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png"], "use_safetensors": true, "download_in_root": false },
+            { "model_id": "DEVAIEXP/SUPIR_F", "local_id": "SUPIR_F", "class_name": null, "model_name": "SUPIR_F", "model_base": "SD-XL", "model_category": "restorer", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png"], "use_safetensors": true, "download_in_root": false },
+            { "model_id": "DEVAIEXP/FaithDiff", "local_id": "FaithDiff", "class_name": null, "model_name": "FaithDiff", "model_base": "SD-XL", "model_category": "restorer", "model_dir": null, "subfolder": null, "revision": null, "variant": null, "allow_patterns": null, "ignore_patterns": [".gitattributes", "*.png"], "use_safetensors": true, "download_in_root": false }
+        ]     
+    },   
+    "PredefinedModels" : {
+        "AAM XL Anime Mix v1": "https://civitai.com/api/download/models/303526",
+        "Anima_pencil-XL v5" : "https://civitai.com/api/download/models/597138",
+        "Animagine XL v3.1": "https://civitai.com/api/download/models/403131?type=Model&format=SafeTensor&size=full&fp=fp16",
+        "Deep Blue XL v4.0.1": "https://civitai.com/api/download/models/420370",
+        "DreamShaper XL v2.1": "https://civitai.com/api/download/models/351306",
+        "DynaVision XL v0.6": "https://civitai.com/api/download/models/297740",
+        "EpiCRealism XL v7": "https://civitai.com/api/download/models/489217",
+        "Halcyon SDXL v1.7": "https://civitai.com/api/download/models/610541",
+        "HimawariMix XL v13": "https://civitai.com/api/download/models/558064",
+        "Jib Mix Realistic XL v13": "https://civitai.com/api/download/models/610292",
+        "Jib Mix Realistic XL v16": "https://civitai.com/api/download/models/1031794?type=Model&format=SafeTensor&size=pruned&fp=fp16",
+        "Juggernaut-XL v9": "https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors",
+        "Juggernaut-X v10": "https://huggingface.co/RunDiffusion/Juggernaut-X-v10/resolve/main/Juggernaut-X-RunDiffusion-NSFW.safetensors",
+        "Pixel Art Diffusion XL Sprite Shaper": "https://civitai.com/api/download/models/364043",
+        "PixelWave v10": "https://civitai.com/api/download/models/542574",
+        "Raemu XL v4" : "https://civitai.com/api/download/models/613928",
+        "RealCartoon-XL v6": "https://civitai.com/api/download/models/254091?type=Model&format=SafeTensor&size=pruned&fp=fp16",
+        "Real Dream SDXL Classic v4": "https://civitai.com/api/download/models/791128",
+        "RealVisXL v4.0": "https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safetensors",      
+        "RealVisXL v5.0 Lightning": "https://civitai.com/api/download/models/798204?type=Model&format=SafeTensor&size=full&fp=fp16",  
+        "TurboVisionXL v4.3.1" : "https://civitai.com/api/download/models/273102",
+        "SDXL FaeTastic v24": "https://civitai.com/api/download/models/291443",
+        "SDXL Yamers Anime Stage Anima": "https://civitai.com/api/download/models/377674",
+        "WildCardX-XL-Fusion OG": "https://civitai.com/api/download/models/345685",
+        "ZavyChromaXL v10": "https://civitai.com/api/download/models/916744"
+    }
+
+}
