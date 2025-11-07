@@ -2,12 +2,12 @@
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow:hidden;">    
 </div>
 
-[![PyPI version](https://badge.fury.io/py/sup_toolbox.svg)](https://badge.fury.io/py/sup_toolbox)
-[![Python Versions](https://img.shields.io/pypi/pyversions/sup_toolbox.svg)](https://pypi.org/project/sup_toolbox/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.gnu.org/licenses/apache-2.0)
-[![Downloads](https://static.pepy.tech/badge/sup_toolbox)](https://pepy.tech/project/sup_toolbox)
-[![Downloads/Month](https://static.pepy.tech/badge/sup_toolbox/month)](https://pepy.tech/project/sup_toolbox)
-If you liked this project, please give me a star! ⭐
+<p align="center">
+  <a href="https://github.com/DEVAIEXP/sup-toolbox/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://github.com/DEVAIEXP/sup-toolbox/blob/main/pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python Version"></a>
+  <a href="https://github.com/DEVAIEXP/sup-toolbox/stargazers"><img src="https://img.shields.io/github/stars/DEVAIEXP/sup-toolbox?style=social" alt="GitHub Stars"></a>
+</p>
+
 
 ## About
 
@@ -33,9 +33,11 @@ Whether you're restoring old photos or upscaling digital art, SUP-Toolbox offers
 
 ### Hardware & Storage
 
--   **GPU:** An NVIDIA GPU with CUDA support and Compute Capability 7.0+ is required for full feature support (including FP8 quantization).
+-   **GPU:** An NVIDIA GPU is **required**.
+    -   **CUDA Compute Capability:** Your GPU must have a CUDA Compute Capability of **6.1 or higher**. This generally includes GPUs from the NVIDIA Pascal architecture (like the GTX 10-series) and all newer generations (RTX 20, 30, 40-series, etc.).
+    -   **Why?** The version of PyTorch and its dependencies used by this project no longer support older architectures (e.g., Maxwell, Kepler). You can check your GPU's Compute Capability on the [NVIDIA Developer website](https://developer.nvidia.com/cuda-gpus).
+-   **VRAM:** GPU memory usage varies significantly. **12GB+ of VRAM** is strongly recommended for a comfortable experience. See the detailed [VRAM Usage Matrix](#vram-usage-matrix) for specific scenarios.
 -   **System RAM:** A minimum of 16GB of system RAM is recommended.
--   **VRAM:** GPU memory usage varies significantly. **12GB+ of VRAM** is recommended for a comfortable experience. See the detailed [VRAM Usage Matrix](#vram-usage-matrix) for specific scenarios.
 -   **Disk Space:** A minimum of **83 GB** of free disk space is required to download and store all the models used by this application.
 -   **Disk Type:** For optimal performance, especially faster model loading times, it is highly recommended to store the models on a **Solid-State Drive (SSD)**, preferably an **NVMe M.2 drive**.
 
@@ -45,7 +47,7 @@ Whether you're restoring old photos or upscaling digital art, SUP-Toolbox offers
 ### 1. Clone the Repository
 First, clone the project to your local machine:
 ```bash
-git clone https://github.com/your-username/sup-toolbox.git
+git clone https://github.com/DEVAIEXP/sup-toolbox.git
 cd sup-toolbox
 ```
 
@@ -53,7 +55,7 @@ cd sup-toolbox
 
 Before running the setup script, you may need to adjust the base configuration, especially if you are using WSL2.
 
-1.  Locate the base settings file at `sup_toolbox/configs/settings.json`.
+1.  Locate the base settings file at `src/sup_toolbox/configs/settings.json`.
 2.  Open it in a text editor.
 3.  **For WSL2 users:** It is highly recommended to disable memory mapping to prevent slow model loading issues when accessing files from the Windows filesystem. Change this line:
     ```json
@@ -67,13 +69,30 @@ Before running the setup script, you may need to adjust the base configuration, 
 
 ### 3. Run the Setup Script
 
-We provide automated setup scripts that create a Python virtual environment, activate it, and install all necessary dependencies.
+We provide automated setup scripts that create a Python virtual environment and install all necessary dependencies. Choose the script that best fits your operating system and terminal.
 
-*   **On Windows:**
-    Simply double-click the `setup.bat` file, or run it from a terminal:
+*   **On Windows (using PowerShell):**
+    This is the recommended method for modern Windows systems.
+
+    1.  **Allow script execution (one-time setup):**
+        If you haven't run PowerShell scripts before, you may need to set the execution policy. Open PowerShell **as an Administrator** and run the following command:
+        ```powershell
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+        ```
+        Press `Y` and `Enter` to confirm. You only need to do this once.
+
+    2.  **Run the script:**
+        In a regular (non-admin) PowerShell terminal, navigate to the project directory and run:
+        ```powershell
+        .\setup.ps1
+        ```
+
+*   **On Windows (using Command Prompt or by double-clicking):**
+    If you prefer the classic Command Prompt, you can use the batch script.
     ```batch
     .\setup.bat
     ```
+    You can also simply **double-click** the `setup.bat` file in Windows Explorer.
 
 *   **On Linux or macOS:**
     First, make the script executable, then run it:
@@ -82,7 +101,7 @@ We provide automated setup scripts that create a Python virtual environment, act
     ./setup.sh
     ```
 
-After the script finishes, the virtual environment will be active, and the `sup-toolbox` command will be available in your terminal.
+After the chosen script finishes, the virtual environment will be active in your terminal, and the `sup-toolbox` command will be available.
 
 *For manual installation steps, please refer to the [Manual Installation Guide](./docs/manual_install.md).*
 
