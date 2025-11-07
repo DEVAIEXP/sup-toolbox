@@ -367,7 +367,7 @@ For a more detailed explanation of each processing engine, including visual comp
 
 ## Releases and Changelog
 
-For a detailed list of changes, new features, and bug fixes for each version, please see the **[CHANGELOG.md](CHANGELOG.md)** file.
+For a detailed list of changes, new features, and bug fixes for each version, please see the **[CHANGELOG.md](src/sup_toolbox/CHANGELOG.md)** file.
 
 ## Licensing
 
@@ -375,7 +375,7 @@ This project is released under a hybrid licensing model. It is crucial to unders
 
 ### Main Project License
 
-The original code for this project, including the Gradio interface, the main controller, and the overall structure, is licensed under the **Apache License, Version 2.0**. You can find the full license text in the `LICENSE` file at the root of this repository.
+The original code for this project, including the main controller, and the overall structure, is licensed under the **Apache License, Version 2.0**. You can find the full license text in the `LICENSE` file at the root of this repository.
 
 ### Third-Party Components & Special Conditions
 

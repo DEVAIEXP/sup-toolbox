@@ -59,6 +59,7 @@ from .enums import (
     WeightingMethod,
 )
 
+
 SAMPLERS_OTHERS = {
     "Euler": (
         EulerDiscreteScheduler,

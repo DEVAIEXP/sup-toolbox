@@ -170,19 +170,19 @@ def get_module_file(module, file_name):
         module_path = inspect.getfile(module)
         module_dir = os.path.dirname(module_path)
         module_dir = Path(module_dir)
-        
-        #try on module folder
+
+        # try on module folder
         file_path = os.path.join(module_dir, file_name)
         if not os.path.exists(file_path):
             print("File not found in this module.")
             pass
         else:
             return file_path
-        
-        #try on root module file
+
+        # try on root module file
         file_path = os.path.join(module_dir.parent.parent, file_name)
-        if not os.path.exists(file_path):            
-            raise FileNotFoundError 
+        if not os.path.exists(file_path):
+            raise FileNotFoundError
 
         return file_path
 
