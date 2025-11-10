@@ -1,2 +1,0 @@
-[console_scripts]
-sup-toolbox = sup_toolbox.cli:main

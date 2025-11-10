@@ -826,7 +826,9 @@ class StableDiffusionXLControlNetTileSRPipeline(
             latents_mean = torch.tensor(self.vae.config.latents_mean).view(1, 4, 1, 1)
         if hasattr(self.vae.config, "latents_std") and self.vae.config.latents_std is not None:
             latents_std = torch.tensor(self.vae.config.latents_std).view(1, 4, 1, 1)
-
+        if hasattr(self.vae, "device") and self.vae.device.type != device.type:
+            self.vae = self.vae.to(device)
+            
         dtype = self.vae.dtype
         image = image.to(device=device, dtype=dtype)
 

@@ -10,6 +10,7 @@ __pycache__/
 /venv
 .venv/
 *.log
+*.egg-info/
 Makefile
 .DS_Store
 .gradio
