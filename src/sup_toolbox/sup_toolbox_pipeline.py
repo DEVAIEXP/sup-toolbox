@@ -1356,7 +1356,10 @@ class SUPToolBoxPipeline:
 
             for pass_num in range(num_2x_passes):
                 self._cancel_checker()
-
+                
+                if pass_num >0 and not self.config.enable_cpu_offload:
+                    self._ensure_pipeline_is_active(self.config.upscaler_engine)
+                    
                 input_for_this_pass = current_image_for_pass
                 current_w, current_h = input_for_this_pass.size
                 target_pass_h, target_pass_w = current_h * 2, current_w * 2
@@ -2105,8 +2108,8 @@ class SUPToolBoxPipeline:
         """
         Unload llava model before inference to save VRAM
         """
-        self._do_logger("Unloading llava model...")
         if self.llava_model is not None:
+            self._do_logger("Unloading llava model...")
             self.llava_model = None
         if self.llava_processor is not None:
             self.llava_processor = None
