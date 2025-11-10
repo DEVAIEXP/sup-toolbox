@@ -509,7 +509,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
             if not is_safetensors and not is_pickle: #try set default 
                 weight_path = os.path.join(weight_path, "diffusion_pytorch_model.safetensors")
             if not os.path.exists(weight_path):
-                raise ValueError(f"`weigth_path` supplied: {weight_path}, not exists!")
+                raise ValueError(f"`weight_path` supplied: {weight_path}, not exists!")
             if is_pickle:
                 state_dict = torch.load(weight_path, weights_only=False)
             else:
