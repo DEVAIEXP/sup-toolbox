@@ -554,6 +554,7 @@ class DefaultSettings:
     disable_mmap: bool = True
     always_offload_models: bool = True
     run_vae_on_cpu: bool = False
+    running_on_spaces: bool = False
 
 
 @dataclass
@@ -690,6 +691,7 @@ class Config:
     disable_mmap: bool = _default_settings.disable_mmap
     always_offload_models: bool = _default_settings.always_offload_models
     run_vae_on_cpu: bool = _default_settings.run_vae_on_cpu
+    running_on_spaces: bool = _default_settings.running_on_spaces
     # endregion
 
     # region upscaler

@@ -35,15 +35,18 @@ from diffusers.models.attention_processor import (
 )
 from diffusers.utils import logging
 
+
 logger = logging.get_logger(__name__)
+
 
 def zero_module(module):
     for p in module.parameters():
         p.detach().zero_()
     return module
 
+
 def timestep_embedding(timesteps, dim, repeat_only=False):
-    if not repeat_only:        
+    if not repeat_only:
         if timesteps.dim() == 0:
             timesteps = timesteps[None]
         half = dim // 2
@@ -56,9 +59,11 @@ def timestep_embedding(timesteps, dim, repeat_only=False):
     else:
         return timesteps.repeat(1, dim)
 
+
 class TimestepBlock(nn.Module):
     def forward(self, x, emb):
         pass
+
 
 class TimestepEmbedSequential(nn.Sequential, TimestepBlock):
     def forward(self, x, emb, encoder_hidden_states=None):
@@ -71,9 +76,11 @@ class TimestepEmbedSequential(nn.Sequential, TimestepBlock):
                 x = layer(x)
         return x
 
+
 class GroupNorm32(nn.GroupNorm):
     def __init__(self, num_groups, num_channels, eps=1e-5, affine=True):
         super().__init__(num_groups, num_channels, eps, affine)
+
 
 class ResBlock(TimestepBlock):
     def __init__(self, channels, emb_channels, dropout=0.0, out_channels=None, dims=2, use_checkpoint=False):
@@ -113,6 +120,7 @@ class ResBlock(TimestepBlock):
         h = self.out_layers(h)
         return self.skip_connection(x) + h
 
+
 class Downsample(nn.Module):
     def __init__(self, channels, out_channels=None):
         super().__init__()
@@ -123,6 +131,7 @@ class Downsample(nn.Module):
     def forward(self, x):
         return self.op(x)
 
+
 class GEGLU(nn.Module):
     def __init__(self, dim_in, dim_out):
         super().__init__()
@@ -132,20 +141,18 @@ class GEGLU(nn.Module):
         x, gate = self.proj(x).chunk(2, dim=-1)
         return x * F.gelu(gate)
 
+
 class FeedForward(nn.Module):
     def __init__(self, dim, dim_out=None, mult=4, glu=False, dropout=0.0):
         super().__init__()
         inner_dim = int(dim * mult)
         dim_out = dim_out or dim
         project_in = GEGLU(dim, inner_dim) if glu else nn.Sequential(nn.Linear(dim, inner_dim), nn.GELU())
-        self.net = nn.Sequential(
-            project_in,
-            nn.Dropout(dropout),
-            nn.Linear(inner_dim, dim_out)
-        )
+        self.net = nn.Sequential(project_in, nn.Dropout(dropout), nn.Linear(inner_dim, dim_out))
 
     def forward(self, x):
         return self.net(x)
+
 
 class BasicTransformerBlock(nn.Module):
     def __init__(self, dim, n_heads, d_head, dropout=0.0, context_dim=None, disable_self_attn=False):
@@ -169,12 +176,13 @@ class BasicTransformerBlock(nn.Module):
         self.norm2 = nn.LayerNorm(dim)
         self.norm3 = nn.LayerNorm(dim)
         self.disable_self_attn = disable_self_attn
-      
+
     def forward(self, x, encoder_hidden_states=None):
         x = self.attn1(self.norm1(x), encoder_hidden_states=encoder_hidden_states if self.disable_self_attn else None) + x
         x = self.attn2(self.norm2(x), encoder_hidden_states=encoder_hidden_states) + x
         x = self.ff(self.norm3(x)) + x
         return x
+
 
 class SpatialTransformer(nn.Module):
     def __init__(self, in_channels, n_heads, d_head, depth=1, context_dim=None, use_linear=True):
@@ -190,10 +198,7 @@ class SpatialTransformer(nn.Module):
             self.proj_in = nn.Conv2d(in_channels, inner_dim, 1)
             self.proj_out = zero_module(nn.Conv2d(inner_dim, in_channels, 1))
 
-        self.transformer_blocks = nn.ModuleList([
-            BasicTransformerBlock(inner_dim, n_heads, d_head, context_dim=context_dim)
-            for _ in range(depth)
-        ])
+        self.transformer_blocks = nn.ModuleList([BasicTransformerBlock(inner_dim, n_heads, d_head, context_dim=context_dim) for _ in range(depth)])
 
     def forward(self, x, encoder_hidden_states=None):
         b, c, h, w = x.shape
@@ -213,9 +218,10 @@ class SpatialTransformer(nn.Module):
             x = self.proj_out(x)
         return x + x_in
 
+
 class SUPIRControlNetModel(ModelMixin, ConfigMixin):
     _no_split_modules = ["BasicTransformerBlock", "ResnetBlock2D", "CrossAttnUpBlock2D", "UpBlock2D"]
-    
+
     @register_to_config
     def __init__(
         self,
@@ -233,7 +239,7 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
         use_spatial_transformer=True,
         use_linear_in_transformer=True,
     ):
-        super().__init__()        
+        super().__init__()
         self.in_channels = in_channels
         self.model_channels = model_channels
         self.channel_mult = channel_mult
@@ -256,12 +262,8 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
                 )
             )
 
-        self.input_hint_block = TimestepEmbedSequential(
-            zero_module(nn.Conv2d(in_channels, model_channels, 3, padding=1))
-        )
-        self.input_blocks = nn.ModuleList([
-            TimestepEmbedSequential(nn.Conv2d(in_channels, model_channels, 3, padding=1))
-        ])
+        self.input_hint_block = TimestepEmbedSequential(zero_module(nn.Conv2d(in_channels, model_channels, 3, padding=1)))
+        self.input_blocks = nn.ModuleList([TimestepEmbedSequential(nn.Conv2d(in_channels, model_channels, 3, padding=1))])
         input_block_chans = [model_channels]
         ch = model_channels
         ds = 1
@@ -288,19 +290,19 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
             SpatialTransformer(ch, n_heads, num_head_channels, depth=transformer_depth[-1], context_dim=context_dim, use_linear=use_linear_in_transformer),
             ResBlock(ch, time_embed_dim),
         )
-    
+
     def forward(
         self,
         sample: torch.Tensor,
         timestep: torch.Tensor,
         encoder_hidden_states: torch.Tensor,
         controlnet_cond: torch.Tensor,
-        added_cond_kwargs: Optional[Dict[str, torch.Tensor]] = None,        
+        added_cond_kwargs: Optional[Dict[str, torch.Tensor]] = None,
         controlnet_conditioning_scale: float = 1.0,
         guess_mode: bool = False,
         return_dict: bool = False,
-    ):        
-        logger.debug(f"\n=== SUPIRControlNetModel Diffusers Forward Start ===")
+    ):
+        logger.debug("\n=== SUPIRControlNetModel Diffusers Forward Start ===")
         logger.debug(f"  Input sample (xt) shape: {sample.shape}, dtype: {sample.dtype}")
         logger.debug(f"  Input timestep: {timestep}")
         logger.debug(f"  Input encoder_hidden_states shape: {encoder_hidden_states.shape}")
@@ -310,30 +312,29 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
         elif added_cond_kwargs is not None:
             logger.debug(f"  Input added_cond_kwargs keys: {list(added_cond_kwargs.keys())} ('vector' missing?)")
         else:
-            logger.debug(f"  Input added_cond_kwargs: None")
-                
+            logger.debug("  Input added_cond_kwargs: None")
+
         _dtype = sample.dtype
-        if encoder_hidden_states is not None: 
+        if encoder_hidden_states is not None:
             encoder_hidden_states = encoder_hidden_states.to(_dtype)
-        if controlnet_cond is not None: 
+        if controlnet_cond is not None:
             controlnet_cond = controlnet_cond.to(_dtype)
-        
-        timestep_val = timestep.item() if torch.is_tensor(timestep) and timestep.numel() == 1 else timestep
+
         t_emb = timestep_embedding(timestep, self.model_channels, repeat_only=False).to(_dtype)
         emb = self.time_embed(t_emb)
-        logger.debug(f"--- Timestep Embedding ---")
+        logger.debug("--- Timestep Embedding ---")
         logger.debug(f"  t_emb shape: {t_emb.shape}")
         logger.debug(f"  emb (after time_embed) shape: {emb.shape}")
-        
+
         if self.num_classes == "sequential" and added_cond_kwargs:
             vector_input = added_cond_kwargs.get("vector")
             if vector_input is not None:
-                logger.debug(f"--- Label Embedding ---")
+                logger.debug("--- Label Embedding ---")
                 logger.debug(f"  Received vector shape: {vector_input.shape}")
-                if not hasattr(self.label_emb[0][0], 'in_features'):
+                if not hasattr(self.label_emb[0][0], "in_features"):
                     logger.debug("ERROR: Cannot check label_emb input dimension.")
                 elif vector_input.shape[-1] != self.label_emb[0][0].in_features:
-                    logger.error(f"Shape mismatch for label_emb: input vector has {vector_input.shape[-1]}, layer expects {self.label_emb[0][0].in_features}")                    
+                    logger.error(f"Shape mismatch for label_emb: input vector has {vector_input.shape[-1]}, layer expects {self.label_emb[0][0].in_features}")
                 else:
                     label_emb_out = self.label_emb(vector_input.to(emb.dtype))
                     logger.debug(f"  label_emb output shape: {label_emb_out.shape}")
@@ -341,53 +342,53 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
                     logger.debug(f"  emb (after adding label_emb) shape: {emb.shape}")
             else:
                 logger.warning("'vector' not found in added_cond_kwargs for label_emb.")
-                logger.debug(f"--- Label Embedding SKIPPED ('vector' not found) ---")
+                logger.debug("--- Label Embedding SKIPPED ('vector' not found) ---")
         elif self.num_classes is not None:
             logger.debug(f"--- Label Embedding SKIPPED (num_classes='{self.num_classes}') ---")
 
-        logger.debug(f"--- Hint Processing ---")
+        logger.debug("--- Hint Processing ---")
         logger.debug(f"  Input to input_hint_block (controlnet_cond=zLQ): {controlnet_cond.shape}")
-        
+
         guided_hint = self.input_hint_block(controlnet_cond, emb, encoder_hidden_states=encoder_hidden_states.to(emb.dtype))
         logger.debug(f"  Output of input_hint_block (guided_hint): {guided_hint.shape}")
-        
+
         hs = []
         h = sample.to(self.dtype)
-        logger.debug(f"\n--- ControlNet Input Blocks (Processing Sample/xt) ---")
+        logger.debug("\n--- ControlNet Input Blocks (Processing Sample/xt) ---")
 
         # Block 0 (Initial Conv)
         h_in_shape = h.shape
         h = self.input_blocks[0](h, emb, encoder_hidden_states=encoder_hidden_states)
         logger.debug(f"  Input Block 0 ({type(self.input_blocks[0]).__name__}): Input={h_in_shape}, Output={h.shape}")
-      
+
         if guided_hint is not None:
-            logger.debug(f"  (Adding guided_hint to h after block 0)")
+            logger.debug("  (Adding guided_hint to h after block 0)")
             h = h + guided_hint.to(h.dtype)
             guided_hint = None
             logger.debug(f"    Shape after adding hint: {h.shape}")
 
         hs.append(h)
-       
+
         for i, module in enumerate(self.input_blocks[1:], start=1):
-            h_in_shape = h.shape            
+            h_in_shape = h.shape
             h = module(h, emb, encoder_hidden_states=encoder_hidden_states.to(emb.dtype))
-            hs.append(h)            
+            hs.append(h)
             logger.debug(f"  Input Block {i} ({type(module).__name__}): Input={h_in_shape}, Output={h.shape}")
 
         # Middle Block
-        logger.debug(f"\n--- ControlNet Mid Block ---")
-        h_in_mid_shape = h.shape        
+        logger.debug("\n--- ControlNet Mid Block ---")
+        h_in_mid_shape = h.shape
         h = self.middle_block(h, emb, encoder_hidden_states=encoder_hidden_states.to(emb.dtype))
-        hs.append(h)        
+        hs.append(h)
         logger.debug(f"  Mid Block: Input={h_in_mid_shape}, Output={h.shape}")
-        
-        logger.debug(f"\n--- ControlNet Final Output (hs) ---")
+
+        logger.debug("\n--- ControlNet Final Output (hs) ---")
         for i_hs, tensor_hs in enumerate(hs):
             logger.debug(f"  hs[{i_hs}]: {tensor_hs.shape}")
-                
+
         return hs
-        
-    @property    
+
+    @property
     # Copied from diffusers.models.unets.unet_2d_condition.UNet2DConditionModel.attn_processors
     def attn_processors(self) -> Dict[str, AttentionProcessor]:
         r"""
@@ -457,9 +458,7 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
         elif all(proc.__class__ in CROSS_ATTENTION_PROCESSORS for proc in self.attn_processors.values()):
             processor = AttnProcessor()
         else:
-            raise ValueError(
-                f"Cannot call `set_default_attn_processor` when attention processors are of type {next(iter(self.attn_processors.values()))}"
-            )
+            raise ValueError(f"Cannot call `set_default_attn_processor` when attention processors are of type {next(iter(self.attn_processors.values()))}")
 
         self.set_attn_processor(processor)
 
@@ -528,4 +527,3 @@ class SUPIRControlNetModel(ModelMixin, ConfigMixin):
         reversed_slice_size = list(reversed(slice_size))
         for module in self.children():
             fn_recursive_set_attention_slice(module, reversed_slice_size)
-     

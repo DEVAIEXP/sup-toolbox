@@ -125,24 +125,20 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         self.run_vae_on_cpu = False
         # only relevant if vae tiling is enabled
         self.tile_sample_min_size = self.config.sample_size
-        sample_size = (
-            self.config.sample_size[0]
-            if isinstance(self.config.sample_size, (list, tuple))
-            else self.config.sample_size
-        )
+        sample_size = self.config.sample_size[0] if isinstance(self.config.sample_size, (list, tuple)) else self.config.sample_size
         self.tile_latent_min_size = int(sample_size / (2 ** (len(self.config.block_out_channels) - 1)))
         self.tile_overlap_factor = 0.25
 
     def enable_run_on_cpu(self, run_on_cpu: bool = True):
         """
         Enable/disable running VAE computations on the CPU to save VRAM.
-        
+
         When this is enabled, the main VAE modules (encoder/decoder) and
         their data will be processed on the CPU. This significantly reduces
         VRAM usage at the cost of processing speed.
         """
         self.run_vae_on_cpu = run_on_cpu
-        
+
     def enable_tiling(self, use_tiling: bool = True):
         r"""
         Enable tiled VAE decoding. When this option is enabled, the VAE will split the input tensor into tiles to
@@ -242,9 +238,7 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         elif all(proc.__class__ in CROSS_ATTENTION_PROCESSORS for proc in self.attn_processors.values()):
             processor = AttnProcessor()
         else:
-            raise ValueError(
-                f"Cannot call `set_default_attn_processor` when attention processors are of type {next(iter(self.attn_processors.values()))}"
-            )
+            raise ValueError(f"Cannot call `set_default_attn_processor` when attention processors are of type {next(iter(self.attn_processors.values()))}")
 
         self.set_attn_processor(processor)
 
@@ -261,9 +255,7 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         return enc
 
     @apply_forward_hook
-    def encode(
-        self, x: torch.Tensor, return_dict: bool = True
-    ) -> Union[AutoencoderKLOutput, Tuple[DiagonalGaussianDistribution]]:
+    def encode(self, x: torch.Tensor, return_dict: bool = True) -> Union[AutoencoderKLOutput, Tuple[DiagonalGaussianDistribution]]:
         """
         Encode a batch of images into latents.
 
@@ -304,9 +296,7 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         return DecoderOutput(sample=dec)
 
     @apply_forward_hook
-    def decode(
-        self, z: torch.FloatTensor, return_dict: bool = True, generator=None
-    ) -> Union[DecoderOutput, torch.FloatTensor]:
+    def decode(self, z: torch.FloatTensor, return_dict: bool = True, generator=None) -> Union[DecoderOutput, torch.FloatTensor]:
         """
         Decode a batch of images.
 
@@ -365,7 +355,7 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         blend_extent = int(self.tile_latent_min_size * self.tile_overlap_factor)
         row_limit = self.tile_latent_min_size - blend_extent
         self.quant_conv = self.quant_conv.to(x.device)
-        
+
         # Split the image into 512x512 tiles and encode them separately.
         rows = []
         for i in range(0, x.shape[2], overlap_size):
@@ -422,7 +412,7 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
         overlap_size = int(self.tile_latent_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_sample_min_size * self.tile_overlap_factor)
         row_limit = self.tile_sample_min_size - blend_extent
-                
+
         cpu_device = torch.device("cpu")
         original_device = z.device
 
@@ -510,15 +500,13 @@ class AutoencoderKL(ModelMixin, ConfigMixin, FromOriginalModelMixin, PeftAdapter
                 is returned, otherwise a plain `tuple` is returned. The `latent_dist`
                 field contains the distribution of the final encoded latents.
         """
-        deprecation_message = (
-            "The tiled_encode implementation supporting the `return_dict` parameter is deprecated..."
-        )
+        deprecation_message = "The tiled_encode implementation supporting the `return_dict` parameter is deprecated..."
         deprecate("tiled_encode", "1.0.0", deprecation_message, standard_warn=False)
-        
+
         overlap_size = int(self.tile_sample_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_latent_min_size * self.tile_overlap_factor)
         row_limit = self.tile_latent_min_size - blend_extent
-                
+
         cpu_device = torch.device("cpu")
         original_device = x.device
 

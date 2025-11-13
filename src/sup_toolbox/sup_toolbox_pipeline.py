@@ -1187,8 +1187,11 @@ class SUPToolBoxPipeline:
                     final_image_to_save = adain_color_fix(final_image_to_save, image_color_reference)
 
             self._do_logger(f"Saving restored image {image_rank}", restored_image_file)
-            saved_image = save_image_with_metadata(final_image_to_save, restored_image_file, self.metadata)
-            images_for_next_stage.append(saved_image)
+            if not self.config.running_on_spaces:
+                saved_image = save_image_with_metadata(final_image_to_save, restored_image_file, self.metadata)
+                images_for_next_stage.append(saved_image)
+            else:
+                images_for_next_stage.append(final_image_to_save)
 
         self._do_logger("-" * self._log_num_divisor)
 
@@ -1356,10 +1359,10 @@ class SUPToolBoxPipeline:
 
             for pass_num in range(num_2x_passes):
                 self._cancel_checker()
-                
-                if pass_num >0 and not self.config.enable_cpu_offload:
+
+                if pass_num > 0 and not self.config.enable_cpu_offload:
                     self._ensure_pipeline_is_active(self.config.upscaler_engine)
-                    
+
                 input_for_this_pass = current_image_for_pass
                 current_w, current_h = input_for_this_pass.size
                 target_pass_h, target_pass_w = current_h * 2, current_w * 2
@@ -2639,8 +2642,8 @@ class SUPToolBoxPipeline:
                     upscaled_image_file,
                 )
                 final_image = adain_color_fix(final_image, image_color_reference)
-
-        final_image = save_image_with_metadata(final_image, upscaled_image_file, self.metadata)
+        if not self.config.running_on_spaces:
+            final_image = save_image_with_metadata(final_image, upscaled_image_file, self.metadata)
         self._cancel_checker()
         return final_image
 

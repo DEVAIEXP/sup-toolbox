@@ -48,15 +48,16 @@ from diffusers.utils import (
 from diffusers.utils.accelerate_utils import apply_forward_hook
 from safetensors.torch import load_file
 
+
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 
-    
 def zero_module(module):
     """Zero out the parameters of a module and return it."""
     for p in module.parameters():
         nn.init.zeros_(p)
     return module
+
 
 class Encoder(ModelMixin):
     """Encoder layer of a variational autoencoder that encodes input into a latent representation."""
@@ -161,12 +162,8 @@ class Encoder(ModelMixin):
 
             if is_torch_version(">=", "1.11.0"):
                 for down_block in self.down_blocks:
-                    sample = torch.utils.checkpoint.checkpoint(
-                        create_custom_forward(down_block), sample, use_reentrant=False
-                    )
-                sample = torch.utils.checkpoint.checkpoint(
-                    create_custom_forward(self.mid_block), sample, use_reentrant=False
-                )
+                    sample = torch.utils.checkpoint.checkpoint(create_custom_forward(down_block), sample, use_reentrant=False)
+                sample = torch.utils.checkpoint.checkpoint(create_custom_forward(self.mid_block), sample, use_reentrant=False)
             else:
                 for down_block in self.down_blocks:
                     sample = torch.utils.checkpoint.checkpoint(create_custom_forward(down_block), sample)
@@ -176,7 +173,7 @@ class Encoder(ModelMixin):
             for down_block in self.down_blocks:
                 sample = down_block(sample)
             sample = self.mid_block(sample)
-            
+
             return sample
 
     def blend_v(self, a: torch.Tensor, b: torch.Tensor, blend_extent: int) -> torch.Tensor:
@@ -200,13 +197,11 @@ class Encoder(ModelMixin):
             return self._tiled_encode(x)
 
         enc = self.encoder(x)
-        
+
         return enc
 
     @apply_forward_hook
-    def encode(
-        self, x: torch.Tensor, return_dict: bool = True
-    ) -> Union[AutoencoderKLOutput]:
+    def encode(self, x: torch.Tensor, return_dict: bool = True) -> Union[AutoencoderKLOutput]:
         """
         Encode a batch of images into latents.
 
@@ -225,7 +220,7 @@ class Encoder(ModelMixin):
         else:
             h = self._encode(x)
         return h
-           
+
     def _tiled_encode(self, x: torch.FloatTensor) -> torch.FloatTensor:
         """Encode the input tensor using tiling for large inputs."""
         overlap_size = int(self.tile_sample_min_size * (1 - self.tile_overlap_factor))
@@ -262,6 +257,7 @@ class Encoder(ModelMixin):
     #         return self._tiled_encode(sample)
     #     return self.encoder(sample)
 
+
 class ControlNetConditioningEmbedding(nn.Module):
     """A small network to preprocess conditioning inputs, inspired by ControlNet."""
 
@@ -269,9 +265,7 @@ class ControlNetConditioningEmbedding(nn.Module):
         super().__init__()
         self.conv_in = nn.Conv2d(conditioning_channels, conditioning_channels, kernel_size=3, padding=1)
         self.norm_in = nn.GroupNorm(num_channels=conditioning_channels, num_groups=32, eps=1e-6)
-        self.conv_out = zero_module(
-            nn.Conv2d(conditioning_channels, conditioning_embedding_channels, kernel_size=3, padding=1)
-        )
+        self.conv_out = zero_module(nn.Conv2d(conditioning_channels, conditioning_embedding_channels, kernel_size=3, padding=1))
 
     def forward(self, conditioning):
         """Process the conditioning input through the network."""
@@ -469,9 +463,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
         num_trans_head = 8
         num_trans_layer = 2
         num_proj_channel = 320
-        self.information_transformer_layes = nn.Sequential(
-            *[ResidualAttentionBlock(num_trans_channel, num_trans_head) for _ in range(num_trans_layer)]
-        )
+        self.information_transformer_layes = nn.Sequential(*[ResidualAttentionBlock(num_trans_channel, num_trans_head) for _ in range(num_trans_layer)])
         self.spatial_ch_projs = zero_module(nn.Linear(num_trans_channel, num_proj_channel))
 
     def init_ControlNetConditioningEmbedding(self, channel=512):
@@ -480,9 +472,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
     def init_extra_weights(self):
         self.agg_net = nn.ModuleList()
 
-    def load_additional_layers(
-        self, dtype: Optional[torch.dtype] = torch.float16, channel: int = 512, weight_path: Optional[str] = None
-    ):
+    def load_additional_layers(self, dtype: Optional[torch.dtype] = torch.float16, channel: int = 512, weight_path: Optional[str] = None):
         """Load additional layers and weights from a file.
 
         Args:
@@ -506,7 +496,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
         if weight_path is not None:
             is_safetensors = weight_path.endswith(".safetensors")
             is_pickle = weight_path.endswith(".ckpt") or weight_path.endswith(".bin")
-            if not is_safetensors and not is_pickle: #try set default 
+            if not is_safetensors and not is_pickle:  # try set default
                 weight_path = os.path.join(weight_path, "diffusion_pytorch_model.safetensors")
             if not os.path.exists(weight_path):
                 raise ValueError(f"`weight_path` supplied: {weight_path}, not exists!")
@@ -646,9 +636,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
             else:
                 emb = emb + class_emb
 
-        aug_emb = self.get_aug_embed(
-            emb=emb, encoder_hidden_states=encoder_hidden_states, added_cond_kwargs=added_cond_kwargs
-        )
+        aug_emb = self.get_aug_embed(emb=emb, encoder_hidden_states=encoder_hidden_states, added_cond_kwargs=added_cond_kwargs)
         if self.config.addition_embed_type == "image_hint":
             aug_emb, hint = aug_emb
             sample = torch.cat([sample, hint], dim=1)
@@ -658,24 +646,18 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
         if self.time_embed_act is not None:
             emb = self.time_embed_act(emb)
 
-        encoder_hidden_states = self.process_encoder_hidden_states(
-            encoder_hidden_states=encoder_hidden_states, added_cond_kwargs=added_cond_kwargs
-        )
+        encoder_hidden_states = self.process_encoder_hidden_states(encoder_hidden_states=encoder_hidden_states, added_cond_kwargs=added_cond_kwargs)
 
         # 2. pre-process (following the original modified logic)
-        base_sample  = self.conv_in(sample)  # [B, 4, H, W] -> [B, 320, H, W]
-        if (
-            input_embedding is not None
-            and self.condition_embedding is not None
-            and self.information_transformer_layes is not None
-        ):
+        base_sample = self.conv_in(sample)  # [B, 4, H, W] -> [B, 320, H, W]
+        if input_embedding is not None and self.condition_embedding is not None and self.information_transformer_layes is not None:
             conditioned_hint: torch.Tensor
             if use_condition_embedding:
                 conditioned_hint = self.condition_embedding(input_embedding)  # [B, 320, H, W]
             else:
                 conditioned_hint = input_embedding
-                
-            if base_sample.shape[2:] != conditioned_hint.shape[2:]:                
+
+            if base_sample.shape[2:] != conditioned_hint.shape[2:]:
                 conditioned_hint = F.interpolate(conditioned_hint, size=base_sample.shape[2:], mode="bilinear", align_corners=False)
 
             if base_sample.shape[1] != conditioned_hint.shape[1]:
@@ -685,27 +667,27 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
                 )
 
             batch_size, channel_unet, height, width = base_sample.shape
-           
+
             concat_feat_input = torch.cat([base_sample, conditioned_hint], dim=1)
             if concat_feat_input.shape[1] != self.information_transformer_layes[0].attn.embed_dim:
-                 raise ValueError(
+                raise ValueError(
                     f"Input dimension for information_transformer_layes mismatch. "
                     f"Expected {self.information_transformer_layes[0].attn.embed_dim}, got {concat_feat_input.shape[1]}"
                 )
             concat_feat_input_reshaped = concat_feat_input.view(batch_size, 2 * channel_unet, height * width).transpose(1, 2)
 
-            transformed_feat = self.information_transformer_layes(concat_feat_input_reshaped) # [B, H*W, 640]
-            feat_alpha = self.spatial_ch_projs(transformed_feat) # [B, H*W, 320]
-            feat_alpha = feat_alpha.transpose(1, 2).view(batch_size, channel_unet, height, width) # [B, 320, H, W]            
-            
-            if add_sample:               
+            transformed_feat = self.information_transformer_layes(concat_feat_input_reshaped)  # [B, H*W, 640]
+            feat_alpha = self.spatial_ch_projs(transformed_feat)  # [B, H*W, 320]
+            feat_alpha = feat_alpha.transpose(1, 2).view(batch_size, channel_unet, height, width)  # [B, 320, H, W]
+
+            if add_sample:
                 output_sample = base_sample + feat_alpha * current_control_scale
-            else:                
+            else:
                 output_sample = feat_alpha * current_control_scale
         else:
-             output_sample = base_sample
-        
-        sample = output_sample    
+            output_sample = base_sample
+
+        sample = output_sample
         # 2.5 GLIGEN position net (kept from the original version)
         if cross_attention_kwargs is not None and cross_attention_kwargs.get("gligen", None) is not None:
             cross_attention_kwargs = cross_attention_kwargs.copy()
@@ -759,9 +741,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
 
         if is_controlnet:
             new_down_block_res_samples = ()
-            for down_block_res_sample, down_block_additional_residual in zip(
-                down_block_res_samples, down_block_additional_residuals
-            ):
+            for down_block_res_sample, down_block_additional_residual in zip(down_block_res_samples, down_block_additional_residuals):
                 down_block_res_sample = down_block_res_sample + down_block_additional_residual
                 new_down_block_res_samples = new_down_block_res_samples + (down_block_res_sample,)
             down_block_res_samples = new_down_block_res_samples
@@ -779,11 +759,7 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
                 )
             else:
                 sample = self.mid_block(sample, emb)
-            if (
-                is_adapter
-                and len(down_intrablock_additional_residuals) > 0
-                and sample.shape == down_intrablock_additional_residuals[0].shape
-            ):
+            if is_adapter and len(down_intrablock_additional_residuals) > 0 and sample.shape == down_intrablock_additional_residuals[0].shape:
                 sample += down_intrablock_additional_residuals.pop(0)
 
         if is_controlnet:
@@ -827,4 +803,3 @@ class UNet2DConditionModel(OriginalUNet2DConditionModel, ConfigMixin, UNet2DCond
         if not return_dict:
             return (sample,)
         return UNet2DConditionOutput(sample=sample)
-
