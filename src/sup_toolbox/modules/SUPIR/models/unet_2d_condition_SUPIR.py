@@ -86,7 +86,7 @@ from diffusers.utils import (
 )
 from diffusers.utils.torch_utils import apply_freeu
 from einops import rearrange
-from huggingface_hub import HfFolder, hf_hub_download
+from huggingface_hub import hf_hub_download
 from huggingface_hub.utils import EntryNotFoundError
 from safetensors.torch import load_file
 
@@ -1308,7 +1308,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin,
             "force_download": force_download,
             "proxies": proxies,
             "local_files_only": local_files_only,
-            "token": token or HfFolder.get_token(),
+            "token": token,
             "revision": revision,
             "repo_type": "model",
         }
@@ -1460,7 +1460,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin,
         final_supir_project_type = "ZeroSFT"
         supir_zero_sft_subfolder: str = "zero_sft"
         supir_config_path = None
-        supir_token_used = token or HfFolder.get_token()
+        supir_token_used = token
         supir_config_filename_rel = os.path.join(supir_zero_sft_subfolder, supir_config_name) if supir_zero_sft_subfolder else supir_config_name
 
         if os.path.isdir(supir_model_path):
@@ -1731,7 +1731,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin,
         **kwargs,
     ) -> "UNet2DConditionModel":
         supir_cache_dir = kwargs.get("cache_dir", None)
-        supir_token = kwargs.get("token", None) or HfFolder.get_token()
+        supir_token = kwargs.get("token", None)
         supir_local_files_only = kwargs.get("local_files_only", False)
         supir_force_download = kwargs.get("force_download", False)
         supir_revision = kwargs.get("revision", None)

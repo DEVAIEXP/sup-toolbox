@@ -4,7 +4,8 @@ optimum-quanto==0.2.7
 torch==2.8.0+cu126
 torchvision==0.23.0+cu126
 torchaudio==2.8.0+cu126
-transformers==4.56.0
+transformers>=4.56.0
 bitsandbytes==0.48.1
 xformers==0.0.32.post2
 hf_xet
+git+https://github.com/DEVAIEXP/sup-toolbox.git@main#egg=sup-toolbox
